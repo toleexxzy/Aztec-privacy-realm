@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "A modern platform for image processing with blur effects and text overlays",
   "scripts": {
-    "setup": "echo 'Setting up project...' && npm install && cd frontend && npm install && cd ../backend && npm install",
-    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "dev:frontend": "cd frontend && npm run dev",
+    "setup": "echo 'Setting up project...' && npm install && cd backend && npm install",
+    "dev": "npm run dev:backend",
     "dev:backend": "cd backend && npm run dev",
-    "build": "cd frontend && npm run build",
-    "start": "cd frontend && npm start"
+    "build": "echo 'Static frontend - no build needed'",
+    "start": "cd backend && npm start"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -37,6 +36,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@vercel/node": "^3.0.12",
     "bcryptjs": "^3.0.2",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
