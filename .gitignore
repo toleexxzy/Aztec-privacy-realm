@@ -8,6 +8,11 @@ yarn-error.log*
 /dist/
 /build/
 /.next/
+frontend/.next/
+
+# Cache directories  
+frontend/.next/cache/
+.next/cache/
 
 # Environment variables
 .env
