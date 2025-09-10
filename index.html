@@ -732,19 +732,23 @@
             });
             
             // Upload image function
-            async function uploadImage(file) {
-                console.log('=== UPLOAD DEBUG START ===');
-                console.log('File details:', {
+            async function uploadImage() {
+                const file = fileInput.files[0];
+                if (!file) {
+                    showStatus('Please select a file first.', 'error');
+                    return;
+                }
+                
+                console.log('📝 File selected:', {
                     name: file.name,
                     size: file.size,
-                    type: file.type,
-                    lastModified: file.lastModified
+                    type: file.type
                 });
                 
                 // Validate file type
                 if (!file.type.startsWith('image/')) {
                     console.log('❌ File validation failed: not an image');
-                    showStatus('Please select an image file', 'error');
+                    showStatus('Please select a valid image file.', 'error');
                     return;
                 }
                 
@@ -756,95 +760,35 @@
                 }
                 
                 console.log('✅ File validation passed');
-                showStatus('Uploading image...', 'loading');
+                showStatus('Processing image...', 'loading');
                 
                 // Play upload sound
                 aztecSounds.playUploadSound();
                 
-                // Create FormData
-                const formData = new FormData();
-                formData.append('image', file);
-                console.log('📦 FormData created with file');
+                // Use FileReader to process image client-side (no server needed)
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageUrl = event.target.result;
+                    console.log('✅ Image loaded successfully for client-side processing');
+                    
+                    // Play success sound
+                    aztecSounds.playSuccessSound();
+                    
+                    showStatus('Image uploaded successfully!', 'success');
+                    showImagePreview(imageUrl, file.name);
+                    
+                    // Add uploaded image to gallery immediately
+                    console.log('📸 Adding uploaded image to gallery...');
+                    addToGallery(imageUrl, file.name);
+                };
                 
-                // API Configuration - works for both development and production
-                const API_BASE_URL = window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3001'
-                    : window.location.origin;
+                reader.onerror = function() {
+                    console.error('❌ Error reading file');
+                    showStatus('Error reading file. Please try again.', 'error');
+                };
                 
-                try {
-                    console.log('🚀 Sending request to backend...');
-                    console.log('Request URL:', `${API_BASE_URL}/api/images/upload`);
-                    
-                    // Test backend connectivity first
-                    console.log('🔍 Testing backend connectivity...');
-                    
-                    // Upload to backend
-                    const response = await fetch(`${API_BASE_URL}/api/images/upload`, {
-                        method: 'POST',
-                        body: formData,
-                        mode: 'cors'
-                    });
-                    
-                    console.log('📡 Response received:', {
-                        status: response.status,
-                        statusText: response.statusText,
-                        ok: response.ok,
-                        url: response.url,
-                        type: response.type
-                    });
-                    
-                    // Log response headers
-                    const headers = {};
-                    for (let [key, value] of response.headers.entries()) {
-                        headers[key] = value;
-                    }
-                    console.log('📋 Response headers:', headers);
-                    
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.log('❌ HTTP error response body:', errorText);
-                        throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
-                    }
-                    
-                    const result = await response.json();
-                    console.log('✅ Upload result:', result);
-                    console.log('=== UPLOAD DEBUG END ===');
-                    
-                    if (result.success) {
-                        console.log('✅ Upload successful! File URL:', result.fileUrl);
-                        
-                        // Play success sound
-                        aztecSounds.playSuccessSound();
-                        
-                        showStatus('Image uploaded successfully!', 'success');
-                        showImagePreview(result.fileUrl, file.name);
-                        
-                        // Add uploaded image to gallery immediately (before blur processing)
-                        console.log('📸 Adding uploaded image to gallery...');
-                        addToGallery(result.fileUrl, file.name);
-                    } else {
-                        console.log('❌ Upload failed:', result.error);
-                        showStatus('Upload failed: ' + result.error, 'error');
-                    }
-                } catch (error) {
-                    console.log('=== ERROR DEBUG START ===');
-                    console.error('❌ Upload error details:', {
-                        name: error.name,
-                        message: error.message,
-                        stack: error.stack
-                    });
-                    
-                    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                        console.log('🔌 Network connectivity issue detected');
-                        showStatus('Cannot connect to server. Make sure backend is running on port 3001.', 'error');
-                    } else if (error.message.includes('CORS')) {
-                        console.log('🚫 CORS issue detected');
-                        showStatus('CORS error. Please check server configuration.', 'error');
-                    } else {
-                        showStatus('Upload failed: ' + error.message, 'error');
-                    }
-                    console.log('=== ERROR DEBUG END ===');
-                }
+                // Read file as data URL for client-side processing
+                reader.readAsDataURL(file);
             }
             
             // Show upload status
