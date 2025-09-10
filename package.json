@@ -1,0 +1,58 @@
+{
+  "name": "image-blur-platform",
+  "version": "1.0.0",
+  "description": "A modern platform for image processing with blur effects and text overlays",
+  "scripts": {
+    "setup": "echo 'Setting up project...' && npm install && cd frontend && npm install && cd ../backend && npm install",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm start"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.3.1",
+    "@types/uuid": "^10.0.0",
+    "concurrently": "^8.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "keywords": [
+    "image-processing",
+    "blur-effects",
+    "text-overlay",
+    "nextjs",
+    "express",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.1",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "sharp": "^0.34.3",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.2",
+    "uuid": "^13.0.0"
+  }
+}

@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aztec Privacy Realm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+        
+        .header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main {
+            flex: 1;
+            padding: 3rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fbbf24;
+        }
+        
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 2rem;
+        }
+        
+        .status h2 {
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+        
+        .status-working {
+            background: #10b981;
+        }
+        
+        .status-progress {
+            background: #f59e0b;
+        }
+        
+        .upload-area {
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            opacity: 0.7;
+        }
+        
+        /* Aztec Bubble Effect Animations */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-400px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes bubbleShimmer {
+            0%, 100% {
+                background: radial-gradient(circle, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+            }
+            50% {
+                background: radial-gradient(circle, rgba(255,255,255,0.2), rgba(255,255,255,0.5));
+            }
+        }
+        
+        /* Gallery Section Styles */
+        .gallery-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .gallery-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gallery-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            filter: blur(8px);
+        }
+        
+        .gallery-item-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            font-size: 14px;
+            text-align: center;
+            pointer-events: none;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .gallery-item-info {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .gallery-item-title {
+            color: #10b981;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .gallery-item-date {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+        }
+        
+        @keyframes galleryItemAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .gallery-item-new {
+            animation: galleryItemAppear 0.5s ease-out;
+        }
+        
+        /* Forest Button Hover Effects */
+        #forestToggle:hover {
+            background: rgba(34, 197, 94, 0.4) !important;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+        }
+        
+        #soundToggle:hover {
+            background: rgba(255,255,255,0.2) !important;
+            transform: scale(1.1);
+        }
+        
+        /* Welcome Modal Styles */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .welcome-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            border: 2px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .welcome-title {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .welcome-text {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .welcome-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+        
+        .welcome-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="welcome-modal">
+        <div class="welcome-content">
+            <h2 class="welcome-title">🌲 Welcome to Aztec Privacy Realm</h2>
+            <p class="welcome-text">
+                Experience our mystical privacy sanctuary with immersive forest sounds and magical effects.
+                <br><br>
+                🎵 Enable audio for the full experience, or continue silently if you prefer.
+            </p>
+            <div>
+                <button class="welcome-btn" onclick="enterWithSound()">🔊 Enter with Sound</button>
+                <button class="welcome-btn" onclick="enterSilently()" style="opacity: 0.7;">🔇 Enter Silently</button>
+            </div>
+        </div>
+    </div>
+    
+    <header class="header">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 0.5rem;">
+            <img src="aztec logo.jpg" alt="Aztec Privacy Realm Logo" width="60" height="60" style="border-radius: 8px;" onerror="this.style.display='none'">
+            <h1 style="margin-bottom: 0;">Aztec Privacy Realm</h1>
+        </div>
+        <p>Privacy is power go private today</p>
+        
+        <!-- Sound Controls -->
+        <div style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; align-items: center;">
+            <button id="forestToggle" onclick="toggleForest()" style="
+                background: rgba(34, 197, 94, 0.2);
+                border: 1px solid rgba(34, 197, 94, 0.4);
+                color: #22c55e;
+                padding: 0.5rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+            " title="Toggle Forest Sounds">🌲</button>
+            
+            <button id="soundToggle" onclick="toggleSound()" style="
+                background: rgba(255,255,255,0.1);
+                border: 1px solid rgba(255,255,255,0.2);
+                color: white;
+                padding: 0.5rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+            " title="Toggle Sound">🔊</button>
+            
+            <input type="range" id="volumeSlider" min="0" max="100" value="30" 
+                   onchange="adjustVolume(this.value)" style="
+                width: 80px;
+                height: 5px;
+                background: rgba(255,255,255,0.2);
+                outline: none;
+                border-radius: 3px;
+            " title="Volume Control">
+        </div>
+    </header>
+    
+    <main class="main">
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <h3>Enter the privacy realm</h3>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+            <div id="uploadStatus" style="margin-top: 1rem; display: none;"></div>
+            <div id="imagePreview" style="margin-top: 1rem; display: none;"></div>
+        </div>
+        
+        <!-- Privacy Gallery Section -->
+        <div class="gallery-section" id="gallerySection" style="display: none;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="color: #10b981; margin-bottom: 0.5rem;">🔒 Privacy Gallery</h2>
+                <p style="opacity: 0.8; font-size: 1rem;">Showcase of images protected with Aztec privacy effects</p>
+            </div>
+            
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery items will be added here dynamically -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn" onclick="clearGallery()" style="background: #ef4444;">Clear Gallery</button>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>Aztec realm inspired by aztec privacy glyph</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+            Built by Toluweb3
+        </p>
+    </footer>
+    
+    <script>
+        // Sound System for Aztec Privacy Realm
+        class AztecSoundSystem {
+            constructor() {
+                this.sounds = {};
+                this.isEnabled = true;
+                this.volume = 0.3; // Default volume (30%)
+                this.initializeSounds();
+            }
+            
+            initializeSounds() {
+                // Create audio context for Web Audio API sounds
+                this.audioContextInitialized = false;
+                console.log('🎵 Initializing Aztec sound system...');
+            }
+            
+            // Initialize audio context on first user interaction
+            async initializeAudioContext() {
+                if (this.audioContextInitialized) return true;
+                
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Resume audio context if suspended
+                    if (this.audioContext.state === 'suspended') {
+                        await this.audioContext.resume();
+                    }
+                    
+                    this.audioContextInitialized = true;
+                    console.log('✅ Audio context initialized successfully');
+                    return true;
+                } catch (e) {
+                    console.log('❌ Web Audio API not supported, using fallback');
+                    return false;
+                }
+            }
+            
+            // Create mystical upload sound
+            async playUploadSound() {
+                if (!this.isEnabled) return;
+                await this.initializeAudioContext();
+                this.createTone([200, 300, 400], [0.1, 0.1, 0.2], 'sine');
+            }
+            
+            // Create magical blur processing sound
+            async playBlurSound() {
+                if (!this.isEnabled) return;
+                await this.initializeAudioContext();
+                this.createTone([150, 200, 250, 300], [0.2, 0.1, 0.1, 0.3], 'triangle');
+            }
+            
+            // Create success chime
+            async playSuccessSound() {
+                if (!this.isEnabled) return;
+                await this.initializeAudioContext();
+                this.createTone([400, 500, 600], [0.1, 0.1, 0.2], 'sine');
+            }
+            
+            // Create bubble pop sounds
+            async playBubbleSound() {
+                if (!this.isEnabled) return;
+                await this.initializeAudioContext();
+                const frequency = 200 + Math.random() * 300; // Random bubble frequency
+                this.createTone([frequency], [0.1], 'sine');
+            }
+            
+            // Create ambient mystical atmosphere
+            async playAmbientSound() {
+                if (!this.isEnabled) return;
+                await this.initializeAudioContext();
+                this.createTone([80, 120, 160], [0.3, 0.2, 0.1], 'triangle', 2);
+            }
+            
+            // Create forest ambient sounds
+            async playForestAmbient() {
+                if (!this.isEnabled) return;
+                
+                await this.initializeAudioContext();
+                if (!this.audioContextInitialized) {
+                    console.log('❌ Cannot start forest sounds - audio context not ready');
+                    return;
+                }
+                
+                // Create continuous forest atmosphere
+                this.startForestLoop();
+            }
+            
+            startForestLoop() {
+                if (!this.audioContext || !this.isEnabled) return;
+                
+                try {
+                    // Create wind sound (low frequency noise)
+                    const windGain = this.audioContext.createGain();
+                    windGain.connect(this.audioContext.destination);
+                    windGain.gain.setValueAtTime(this.volume * 0.05, this.audioContext.currentTime);
+                    
+                    // Create rustling leaves effect with filtered noise
+                    const noiseBuffer = this.createNoiseBuffer(2); // 2 seconds of noise
+                    const noiseSource = this.audioContext.createBufferSource();
+                    noiseSource.buffer = noiseBuffer;
+                    noiseSource.loop = true;
+                    
+                    // Filter for wind/leaves sound
+                    const filter = this.audioContext.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(200, this.audioContext.currentTime);
+                    
+                    noiseSource.connect(filter);
+                    filter.connect(windGain);
+                    noiseSource.start();
+                    
+                    // Store reference to stop later if needed
+                    this.forestSource = noiseSource;
+                    
+                    // Add occasional bird chirps
+                    this.scheduleRandomBirdSounds();
+                    
+                } catch (e) {
+                    console.log('Forest ambient creation failed:', e);
+                }
+            }
+            
+            createNoiseBuffer(duration) {
+                const bufferSize = this.audioContext.sampleRate * duration;
+                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const output = buffer.getChannelData(0);
+                
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+                
+                return buffer;
+            }
+            
+            scheduleRandomBirdSounds() {
+                if (!this.isEnabled) return;
+                
+                const playBirdChirp = () => {
+                    if (!this.isEnabled) return;
+                    
+                    // Random bird frequencies
+                    const chirpFreqs = [
+                        [800, 1200, 900], // Robin-like
+                        [1500, 2000, 1800], // Sparrow-like
+                        [600, 800, 700], // Dove-like
+                    ];
+                    
+                    const randomChirp = chirpFreqs[Math.floor(Math.random() * chirpFreqs.length)];
+                    this.createTone(randomChirp, [0.1, 0.1, 0.2], 'sine');
+                    
+                    // Schedule next chirp (10-30 seconds)
+                    const nextChirp = 10000 + Math.random() * 20000;
+                    setTimeout(playBirdChirp, nextChirp);
+                };
+                
+                // First chirp after 5-15 seconds
+                const initialDelay = 5000 + Math.random() * 10000;
+                setTimeout(playBirdChirp, initialDelay);
+            }
+            
+            stopForestAmbient() {
+                if (this.forestSource) {
+                    this.forestSource.stop();
+                    this.forestSource = null;
+                }
+            }
+            
+            // Create tone using Web Audio API
+            createTone(frequencies, durations, waveType = 'sine', totalDuration = 0.5) {
+                if (!this.audioContext) return;
+                
+                try {
+                    const gainNode = this.audioContext.createGain();
+                    gainNode.connect(this.audioContext.destination);
+                    gainNode.gain.setValueAtTime(this.volume * 0.1, this.audioContext.currentTime);
+                    
+                    frequencies.forEach((freq, index) => {
+                        const oscillator = this.audioContext.createOscillator();
+                        oscillator.type = waveType;
+                        oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+                        oscillator.connect(gainNode);
+                        
+                        const startTime = this.audioContext.currentTime + (index * 0.1);
+                        const duration = durations[index] || 0.1;
+                        
+                        oscillator.start(startTime);
+                        oscillator.stop(startTime + duration);
+                        
+                        // Fade out
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                    });
+                } catch (e) {
+                    console.log('Audio creation failed:', e);
+                }
+            }
+            
+            // Toggle sound on/off
+            toggleSound() {
+                this.isEnabled = !this.isEnabled;
+                console.log('🔊 Sound', this.isEnabled ? 'enabled' : 'disabled');
+                return this.isEnabled;
+            }
+            
+            // Set volume (0.0 to 1.0)
+            setVolume(volume) {
+                this.volume = Math.max(0, Math.min(1, volume));
+                console.log('🔊 Volume set to', Math.round(this.volume * 100) + '%');
+            }
+        }
+        
+        // Initialize sound system
+        const aztecSounds = new AztecSoundSystem();
+        
+        // Welcome Modal Functions
+        window.enterWithSound = async function() {
+            console.log('🎵 User chose to enter with sound');
+            
+            // Initialize audio context
+            const audioReady = await aztecSounds.initializeAudioContext();
+            
+            if (audioReady) {
+                // Start forest sounds immediately
+                await aztecSounds.playForestAmbient();
+                
+                // Update forest button appearance
+                const forestButton = document.getElementById('forestToggle');
+                if (forestButton) {
+                    forestButton.style.opacity = '1';
+                    forestButton.style.background = 'rgba(34, 197, 94, 0.3)';
+                }
+                
+                // Play welcome sound
+                setTimeout(() => {
+                    aztecSounds.playAmbientSound();
+                }, 1000);
+                
+                console.log('✅ Forest sounds and audio system ready');
+            }
+            
+            // Hide modal
+            document.getElementById('welcomeModal').style.display = 'none';
+        };
+        
+        window.enterSilently = function() {
+            console.log('🔇 User chose to enter silently');
+            
+            // Disable sounds
+            aztecSounds.isEnabled = false;
+            
+            // Update button appearances
+            const soundButton = document.getElementById('soundToggle');
+            const forestButton = document.getElementById('forestToggle');
+            
+            if (soundButton) {
+                soundButton.textContent = '🔇';
+                soundButton.style.opacity = '0.5';
+            }
+            
+            if (forestButton) {
+                forestButton.style.opacity = '0.3';
+            }
+            
+            // Hide modal
+            document.getElementById('welcomeModal').style.display = 'none';
+        };
+        
+        // Image upload functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            // Handle file selection
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    uploadImage(file);
+                }
+            });
+            
+            // Handle drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.style.background = 'rgba(255,255,255,0.15)';
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.style.background = 'rgba(255,255,255,0.05)';
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.style.background = 'rgba(255,255,255,0.05)';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    uploadImage(files[0]);
+                }
+            });
+            
+            // Upload image function
+            async function uploadImage(file) {
+                console.log('=== UPLOAD DEBUG START ===');
+                console.log('File details:', {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    lastModified: file.lastModified
+                });
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    console.log('❌ File validation failed: not an image');
+                    showStatus('Please select an image file', 'error');
+                    return;
+                }
+                
+                // Validate file size (10MB limit)
+                if (file.size > 10 * 1024 * 1024) {
+                    console.log('❌ File validation failed: too large');
+                    showStatus('File size too large. Maximum 10MB allowed.', 'error');
+                    return;
+                }
+                
+                console.log('✅ File validation passed');
+                showStatus('Uploading image...', 'loading');
+                
+                // Play upload sound
+                aztecSounds.playUploadSound();
+                
+                // Create FormData
+                const formData = new FormData();
+                formData.append('image', file);
+                console.log('📦 FormData created with file');
+                
+                try {
+                    console.log('🚀 Sending request to backend...');
+                    console.log('Request URL: http://localhost:3001/api/images/upload');
+                    
+                    // Test backend connectivity first
+                    console.log('🔍 Testing backend connectivity...');
+                    
+                    // Upload to backend
+                    const response = await fetch('http://localhost:3001/api/images/upload', {
+                        method: 'POST',
+                        body: formData,
+                        mode: 'cors'
+                    });
+                    
+                    console.log('📡 Response received:', {
+                        status: response.status,
+                        statusText: response.statusText,
+                        ok: response.ok,
+                        url: response.url,
+                        type: response.type
+                    });
+                    
+                    // Log response headers
+                    const headers = {};
+                    for (let [key, value] of response.headers.entries()) {
+                        headers[key] = value;
+                    }
+                    console.log('📋 Response headers:', headers);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.log('❌ HTTP error response body:', errorText);
+                        throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log('✅ Upload result:', result);
+                    console.log('=== UPLOAD DEBUG END ===');
+                    
+                    if (result.success) {
+                        console.log('✅ Upload successful! File URL:', result.fileUrl);
+                        
+                        // Play success sound
+                        aztecSounds.playSuccessSound();
+                        
+                        showStatus('Image uploaded successfully!', 'success');
+                        showImagePreview(result.fileUrl, file.name);
+                        
+                        // Add uploaded image to gallery immediately (before blur processing)
+                        console.log('📸 Adding uploaded image to gallery...');
+                        addToGallery(result.fileUrl, file.name);
+                    } else {
+                        console.log('❌ Upload failed:', result.error);
+                        showStatus('Upload failed: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    console.log('=== ERROR DEBUG START ===');
+                    console.error('❌ Upload error details:', {
+                        name: error.name,
+                        message: error.message,
+                        stack: error.stack
+                    });
+                    
+                    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                        console.log('🔌 Network connectivity issue detected');
+                        showStatus('Cannot connect to server. Make sure backend is running on port 3001.', 'error');
+                    } else if (error.message.includes('CORS')) {
+                        console.log('🚫 CORS issue detected');
+                        showStatus('CORS error. Please check server configuration.', 'error');
+                    } else {
+                        showStatus('Upload failed: ' + error.message, 'error');
+                    }
+                    console.log('=== ERROR DEBUG END ===');
+                }
+            }
+            
+            // Show upload status
+            function showStatus(message, type) {
+                uploadStatus.style.display = 'block';
+                uploadStatus.textContent = message;
+                uploadStatus.style.color = type === 'success' ? '#10b981' : 
+                                          type === 'error' ? '#ef4444' : '#f59e0b';
+            }
+            
+            // Show image preview
+            function showImagePreview(imageUrl, fileName) {
+                imagePreview.style.display = 'block';
+                imagePreview.innerHTML = `
+                    <div style="text-align: center;">
+                        <h4 style="color: #10b981; margin-bottom: 1rem;">✅ Upload Complete</h4>
+                        <img src="${imageUrl}" alt="${fileName}" 
+                             style="max-width: 200px; max-height: 200px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">${fileName}</p>
+                        <div style="margin-top: 1rem;">
+                            <button class="btn" onclick="processImage('${imageUrl}')" style="margin-right: 0.5rem;">Apply Blur Effect</button>
+                            <button class="btn" onclick="resetUpload()" style="background: #6b7280;">Upload Another</button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Process image with blur (client-side implementation)
+            window.processImage = async function(imageUrl) {
+                console.log('🎨 Starting blur processing for:', imageUrl);
+                showStatus('Applying blur effect...', 'loading');
+                
+                try {
+                    console.log('🎨 Applying client-side blur to:', imageUrl);
+                    
+                    // Play blur processing sound
+                    if (aztecSounds && aztecSounds.playBlurSound) {
+                        await aztecSounds.playBlurSound();
+                    }
+                    
+                    // Verify image URL is accessible
+                    const testImg = new Image();
+                    testImg.onerror = function() {
+                        console.error('❌ Image URL not accessible:', imageUrl);
+                        showStatus('Image not accessible for processing.', 'error');
+                        return;
+                    };
+                    
+                    testImg.onload = function() {
+                        console.log('✅ Image loaded successfully, applying blur effect');
+                        
+                        // Apply blur effect immediately on the client side
+                        showStatus('Blur effect applied!', 'success');
+                        
+                        // Show processed image with CSS blur and text overlay + bubble effect
+                        const imagePreview = document.getElementById('imagePreview');
+                        if (!imagePreview) {
+                            console.error('❌ imagePreview element not found');
+                            showStatus('Interface error. Please refresh the page.', 'error');
+                            return;
+                        }
+                        
+                        imagePreview.style.display = 'block';
+                        imagePreview.innerHTML = `
+                            <div style="text-align: center; position: relative;">
+                                <h4 style="color: #10b981; margin-bottom: 1rem;">✨ Privacy Effect Applied</h4>
+                                <div id="imageContainer" style="position: relative; display: inline-block; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,0.3);">
+                                    <img src="${imageUrl}" alt="Protected Image" 
+                                         style="max-width: 300px; max-height: 300px; filter: blur(15px); display: block;">
+                                    <div style="
+                                        position: absolute;
+                                        top: 50%;
+                                        left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        color: white;
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+                                        text-align: center;
+                                        pointer-events: none;
+                                        z-index: 10;
+                                        background: rgba(0,0,0,0.2);
+                                        padding: 10px 20px;
+                                        border-radius: 5px;
+                                    ">PRIVACY REALM</div>
+                                    
+                                    <!-- Aztec Logo Bubbles Container -->
+                                    <div id="bubblesContainer" style="
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        width: 100%;
+                                        height: 100%;
+                                        pointer-events: none;
+                                        z-index: 5;
+                                        overflow: hidden;
+                                    "></div>
+                                </div>
+                                <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">Image protected with 15px privacy blur + Aztec bubble effect</p>
+                                <div style="margin-top: 1rem;">
+                                    <button class="btn" onclick="downloadProcessedImage('${imageUrl}')" style="margin-right: 0.5rem;">Download Protected Image</button>
+                                    <button class="btn" onclick="shareToTwitter('${imageUrl}', 'processed-image')" style="background: #1DA1F2; margin-right: 0.5rem;">🐦 Share to Twitter</button>
+                                    <button class="btn" onclick="resetUpload()" style="background: #6b7280;">Process Another</button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Start the Aztec bubble effect after a short delay
+                        setTimeout(() => {
+                            console.log('🎆 Starting Aztec bubble effect...');
+                            try {
+                                startAztecBubbleEffect();
+                            } catch (bubbleError) {
+                                console.error('❌ Bubble effect error:', bubbleError);
+                                // Continue without bubbles if there's an error
+                            }
+                        }, 500);
+                    };
+                    
+                    // Trigger image loading test
+                    testImg.src = imageUrl;
+                    
+                } catch (error) {
+                    console.error('❌ Processing error details:', error);
+                    showStatus('Processing failed: ' + error.message, 'error');
+                }
+            }
+            
+            // Download processed image function
+            window.downloadProcessedImage = async function(imageUrl) {
+                try {
+                    console.log('💾 Downloading processed image:', imageUrl);
+                    
+                    // Create a temporary canvas to apply blur and text overlay for download
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    
+                    img.crossOrigin = 'anonymous';
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        
+                        // Apply blur effect using canvas filter
+                        ctx.filter = 'blur(15px)';
+                        ctx.drawImage(img, 0, 0);
+                        
+                        // Add text overlay
+                        ctx.filter = 'none';
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 48px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.strokeStyle = 'black';
+                        ctx.lineWidth = 2;
+                        
+                        const text = 'PRIVACY REALM';
+                        const x = canvas.width / 2;
+                        const y = canvas.height / 2;
+                        
+                        ctx.strokeText(text, x, y);
+                        ctx.fillText(text, x, y);
+                        
+                        // Download the canvas as image
+                        canvas.toBlob(function(blob) {
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'aztec-privacy-protected-image.png';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                            
+                            showStatus('Protected image downloaded!', 'success');
+                        }, 'image/png');
+                    };
+                    
+                    img.src = imageUrl.split('?')[0]; // Remove query parameters
+                } catch (error) {
+                    console.error('Download error:', error);
+                    showStatus('Download failed. Please try again.', 'error');
+                }
+            }
+            
+            // Twitter Sharing Function
+            window.shareToTwitter = async function(imageUrl, fileName) {
+                try {
+                    console.log('🐦 Preparing Twitter share for:', fileName);
+                    
+                    // Create the tweet text
+                    const tweetText = `Welcome to the realm of privacy! 🔒✨ Just protected my image with Aztec Privacy Realm's mystical blur effects. Your privacy is your power! 🌲💫\n\n@aztecnetwork @toluinweb3 #Privacy #AztecRealm #DataProtection`;
+                    
+                    // Play success sound for sharing action
+                    if (aztecSounds.isEnabled) {
+                        await aztecSounds.playSuccessSound();
+                    }
+                    
+                    // Option 1: Direct Twitter Web Intent (simpler, no image upload)
+                    const encodedText = encodeURIComponent(tweetText);
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+                    
+                    // Show sharing modal for user confirmation
+                    showTwitterModal(twitterUrl, imageUrl, fileName, tweetText);
+                    
+                } catch (error) {
+                    console.error('❌ Twitter share error:', error);
+                    showStatus('Twitter sharing failed. Please try again.', 'error');
+                }
+            };
+            
+            // Show Twitter sharing modal
+            function showTwitterModal(twitterUrl, imageUrl, fileName, tweetText) {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1001;
+                    backdrop-filter: blur(10px);
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%);
+                        padding: 2rem;
+                        border-radius: 20px;
+                        text-align: center;
+                        max-width: 500px;
+                        border: 2px solid rgba(255,255,255,0.2);
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                        color: white;
+                    ">
+                        <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🐦 Share to Twitter</h3>
+                        
+                        <div style="
+                            background: rgba(255,255,255,0.1);
+                            padding: 1rem;
+                            border-radius: 10px;
+                            margin-bottom: 1.5rem;
+                            text-align: left;
+                            font-size: 0.9rem;
+                            line-height: 1.4;
+                        ">
+                            <strong>Tweet Preview:</strong><br><br>
+                            ${tweetText.replace(/\n/g, '<br>')}
+                        </div>
+                        
+                        <div style="
+                            background: rgba(255,255,255,0.1);
+                            padding: 1rem;
+                            border-radius: 10px;
+                            margin-bottom: 1.5rem;
+                            font-size: 0.85rem;
+                            color: rgba(255,255,255,0.9);
+                        ">
+                            📄 <strong>Note:</strong> This will open Twitter in a new tab with the pre-written message. You can manually upload your protected image from your device to complete the tweet.
+                        </div>
+                        
+                        <div>
+                            <button onclick="openTwitterShare('${twitterUrl}')" style="
+                                background: rgba(255,255,255,0.2);
+                                border: 2px solid rgba(255,255,255,0.3);
+                                color: white;
+                                padding: 0.8rem 1.5rem;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                margin-right: 0.5rem;
+                                font-size: 1rem;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                                🐦 Open Twitter
+                            </button>
+                            
+                            <button onclick="closeTwitterModal()" style="
+                                background: rgba(0,0,0,0.2);
+                                border: 2px solid rgba(255,255,255,0.2);
+                                color: rgba(255,255,255,0.8);
+                                padding: 0.8rem 1.5rem;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-size: 1rem;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.background='rgba(0,0,0,0.3)'" onmouseout="this.style.background='rgba(0,0,0,0.2)'">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Store modal reference for closing
+                window.currentTwitterModal = modal;
+            }
+            
+            // Open Twitter share in new tab
+            window.openTwitterShare = function(twitterUrl) {
+                console.log('🔗 Opening Twitter share...');
+                window.open(twitterUrl, '_blank', 'width=600,height=400');
+                closeTwitterModal();
+                showStatus('Twitter opened! Upload your protected image there.', 'success');
+            };
+            
+            // Close Twitter modal
+            window.closeTwitterModal = function() {
+                if (window.currentTwitterModal) {
+                    document.body.removeChild(window.currentTwitterModal);
+                    window.currentTwitterModal = null;
+                }
+            };
+            
+            // Aztec Logo Bubble Effect
+            function startAztecBubbleEffect() {
+                const container = document.getElementById('bubblesContainer');
+                if (!container) return;
+                
+                console.log('🎆 Starting Aztec bubble effect...');
+                
+                // Create multiple bubbles with Aztec logo
+                function createBubble() {
+                    const bubble = document.createElement('div');
+                    const size = Math.random() * 40 + 20; // Random size between 20-60px
+                    const startX = Math.random() * 100; // Random start position (0-100%)
+                    const duration = Math.random() * 4 + 3; // Random duration 3-7 seconds
+                    const delay = Math.random() * 2; // Random delay 0-2 seconds
+                    
+                    bubble.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: radial-gradient(circle, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+                        border: 2px solid rgba(255,255,255,0.4);
+                        border-radius: 50%;
+                        left: ${startX}%;
+                        bottom: -${size}px;
+                        backdrop-filter: blur(2px);
+                        animation: floatUp ${duration}s ease-in-out ${delay}s forwards;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        overflow: hidden;
+                    `;
+                    
+                    // Add Aztec logo inside the bubble
+                    const logo = document.createElement('img');
+                    logo.src = 'aztec logo.jpg';
+                    logo.style.cssText = `
+                        width: ${size * 0.6}px;
+                        height: ${size * 0.6}px;
+                        border-radius: 50%;
+                        opacity: 0.8;
+                        object-fit: cover;
+                    `;
+                    
+                    bubble.appendChild(logo);
+                    container.appendChild(bubble);
+                    
+                    // Play bubble sound with random delay
+                    setTimeout(() => {
+                        aztecSounds.playBubbleSound();
+                    }, delay * 1000 + Math.random() * 1000);
+                    
+                    // Remove bubble after animation
+                    setTimeout(() => {
+                        if (bubble && bubble.parentNode) {
+                            bubble.parentNode.removeChild(bubble);
+                        }
+                    }, (duration + delay + 1) * 1000);
+                }
+                
+                // Create initial set of bubbles
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => createBubble(), i * 300);
+                }
+                
+                // Continue creating bubbles periodically
+                const bubbleInterval = setInterval(() => {
+                    if (document.getElementById('bubblesContainer')) {
+                        createBubble();
+                    } else {
+                        clearInterval(bubbleInterval);
+                    }
+                }, 800);
+                
+                // Stop after 30 seconds to prevent infinite bubbles
+                setTimeout(() => {
+                    clearInterval(bubbleInterval);
+                }, 30000);
+            }
+            
+            // Gallery Management Functions
+            let galleryItems = JSON.parse(localStorage.getItem('aztecGallery') || '[]');
+            
+            function addToGallery(imageUrl, fileName) {
+                console.log('🇬 Adding image to gallery:', fileName);
+                
+                const galleryItem = {
+                    id: Date.now().toString(),
+                    imageUrl: imageUrl,
+                    fileName: fileName,
+                    processedDate: new Date().toLocaleDateString(),
+                    processedTime: new Date().toLocaleTimeString()
+                };
+                
+                // Add to beginning of array (newest first)
+                galleryItems.unshift(galleryItem);
+                
+                // Limit to 20 items to prevent storage overflow
+                if (galleryItems.length > 20) {
+                    galleryItems = galleryItems.slice(0, 20);
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('aztecGallery', JSON.stringify(galleryItems));
+                
+                // Update gallery display
+                updateGalleryDisplay();
+                
+                // Show gallery section
+                document.getElementById('gallerySection').style.display = 'block';
+            }
+            
+            function updateGalleryDisplay() {
+                const galleryGrid = document.getElementById('galleryGrid');
+                
+                if (galleryItems.length === 0) {
+                    galleryGrid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; opacity: 0.6;">
+                            <p>🌅 No privacy-protected images yet</p>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;">Upload and blur some images to see them here!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                galleryGrid.innerHTML = galleryItems.map(item => `
+                    <div class="gallery-item gallery-item-new" data-id="${item.id}">
+                        <div style="position: relative;">
+                            <img src="${item.imageUrl}" alt="${item.fileName}" loading="lazy">
+                            <div class="gallery-item-overlay">PRIVACY REALM</div>
+                        </div>
+                        <div class="gallery-item-info">
+                            <div class="gallery-item-title">🔒 ${item.fileName}</div>
+                            <div class="gallery-item-date">
+                                Protected: ${item.processedDate} at ${item.processedTime}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    document.querySelectorAll('.gallery-item-new').forEach(item => {
+                        item.classList.remove('gallery-item-new');
+                    });
+                }, 500);
+            }
+            
+            function clearGallery() {
+                if (confirm('🤔 Are you sure you want to clear the entire privacy gallery?')) {
+                    galleryItems = [];
+                    localStorage.removeItem('aztecGallery');
+                    updateGalleryDisplay();
+                    console.log('🧹 Gallery cleared successfully');
+                    
+                    // Show success message
+                    showStatus('Gallery cleared successfully!', 'success');
+                    
+                    // Hide gallery section if empty
+                    setTimeout(() => {
+                        document.getElementById('gallerySection').style.display = 'none';
+                    }, 2000);
+                }
+            }
+            
+            // Load gallery on page load
+            window.addEventListener('load', function() {
+                console.log('🔍 Checking gallery on page load...');
+                console.log('Gallery items found:', galleryItems.length);
+                
+                if (galleryItems.length > 0) {
+                    console.log('✅ Showing gallery with', galleryItems.length, 'items');
+                    document.getElementById('gallerySection').style.display = 'block';
+                    updateGalleryDisplay();
+                } else {
+                    console.log('📝 No gallery items found, gallery hidden');
+                }
+            });
+            
+            // Make clearGallery function globally accessible
+            window.clearGallery = clearGallery;
+            
+            // Sound control functions
+            window.toggleSound = function() {
+                const isEnabled = aztecSounds.toggleSound();
+                const button = document.getElementById('soundToggle');
+                button.textContent = isEnabled ? '🔊' : '🔇';
+                button.style.opacity = isEnabled ? '1' : '0.5';
+                
+                if (isEnabled) {
+                    aztecSounds.playSuccessSound(); // Test sound when enabled
+                } else {
+                    // Stop forest sounds when all sounds disabled
+                    aztecSounds.stopForestAmbient();
+                }
+            };
+            
+            window.toggleForest = async function() {
+                const button = document.getElementById('forestToggle');
+                
+                if (aztecSounds.forestSource) {
+                    // Stop forest sounds
+                    aztecSounds.stopForestAmbient();
+                    button.style.opacity = '0.5';
+                    button.style.background = 'rgba(34, 197, 94, 0.1)';
+                    console.log('🌲 Forest sounds stopped');
+                } else {
+                    // Start forest sounds
+                    if (aztecSounds.isEnabled) {
+                        await aztecSounds.initializeAudioContext();
+                        await aztecSounds.playForestAmbient();
+                        button.style.opacity = '1';
+                        button.style.background = 'rgba(34, 197, 94, 0.3)';
+                        console.log('🌲 Forest sounds started');
+                    } else {
+                        alert('🔊 Please enable sounds first!');
+                    }
+                }
+            };
+            
+            window.adjustVolume = function(value) {
+                const volume = parseInt(value) / 100;
+                aztecSounds.setVolume(volume);
+                
+                // Visual feedback
+                const slider = document.getElementById('volumeSlider');
+                slider.style.background = `linear-gradient(to right, #10b981 0%, #10b981 ${value}%, rgba(255,255,255,0.2) ${value}%, rgba(255,255,255,0.2) 100%)`;
+            };
+            
+            // Initialize volume slider appearance
+            window.addEventListener('load', function() {
+                adjustVolume(30); // Set initial volume appearance
+                
+                // Show welcome modal on page load
+                document.getElementById('welcomeModal').style.display = 'flex';
+            });
+            
+            // Reset upload
+            window.resetUpload = function() {
+                fileInput.value = '';
+                uploadStatus.style.display = 'none';
+                imagePreview.style.display = 'none';
+            }
+            
+            // Original feature card click handlers (keeping existing functionality)
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.style.background = 'rgba(255,255,255,0.2)';
+                    setTimeout(() => {
+                        this.style.background = 'rgba(255,255,255,0.1)';
+                    }, 200);
+                });
+            });
+            
+            // Show current time (keeping existing functionality)
+            setInterval(() => {
+                const now = new Date();
+                console.log('Aztec Privacy Realm Status Check:', now.toLocaleTimeString());
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
