@@ -1003,15 +1003,30 @@
                     
                     img.crossOrigin = 'anonymous';
                     img.onload = function() {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
+                        // Set standard dimensions (1920x1080 or maintain aspect ratio)
+                        const maxWidth = 1920;
+                        const maxHeight = 1080;
+                        let canvasWidth, canvasHeight;
+                        
+                        // Calculate dimensions maintaining aspect ratio
+                        const aspectRatio = img.width / img.height;
+                        if (aspectRatio > maxWidth / maxHeight) {
+                            canvasWidth = maxWidth;
+                            canvasHeight = maxWidth / aspectRatio;
+                        } else {
+                            canvasHeight = maxHeight;
+                            canvasWidth = maxHeight * aspectRatio;
+                        }
+                        
+                        canvas.width = canvasWidth;
+                        canvas.height = canvasHeight;
                         
                         // Method 1: Apply blur using multiple draw operations for better compatibility
                         // Create temporary canvas for blur effect
                         const tempCanvas = document.createElement('canvas');
                         const tempCtx = tempCanvas.getContext('2d');
-                        tempCanvas.width = img.width;
-                        tempCanvas.height = img.height;
+                        tempCanvas.width = canvasWidth;
+                        tempCanvas.height = canvasHeight;
                         
                         // Draw image multiple times with slight offsets to create blur effect
                         tempCtx.globalAlpha = 0.1;
@@ -1019,7 +1034,7 @@
                             for (let j = 0; j < 10; j++) {
                                 const offsetX = (i - 5) * 2;
                                 const offsetY = (j - 5) * 2;
-                                tempCtx.drawImage(img, offsetX, offsetY);
+                                tempCtx.drawImage(img, offsetX, offsetY, canvasWidth, canvasHeight);
                             }
                         }
                         
@@ -1028,28 +1043,28 @@
                         
                         // Add semi-transparent overlay for stronger blur effect
                         ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
                         
-                        // Add text overlay
+                        // Add text overlay with responsive sizing
                         ctx.fillStyle = 'white';
-                        const fontSize = Math.max(24, Math.min(canvas.width / 10, 72));
+                        const fontSize = Math.max(32, Math.min(canvasWidth / 12, 96));
                         ctx.font = `bold ${fontSize}px Arial`;
                         ctx.textAlign = 'center';
                         ctx.strokeStyle = 'black';
                         ctx.lineWidth = fontSize / 24;
                         
                         const text = 'PRIVACY REALM';
-                        const x = canvas.width / 2;
-                        const y = canvas.height / 2;
+                        const x = canvasWidth / 2;
+                        const y = canvasHeight / 2;
                         
                         // Add text with shadow effect
                         ctx.strokeText(text, x, y);
                         ctx.fillText(text, x, y);
                         
                         // Add Aztec logo in corner
-                        const logoSize = Math.min(canvas.width, canvas.height) * 0.15;
-                        const logoX = canvas.width - logoSize - 20;
-                        const logoY = 20;
+                        const logoSize = Math.min(canvasWidth, canvasHeight) * 0.12;
+                        const logoX = canvasWidth - logoSize - 30;
+                        const logoY = 30;
                         
                         // Draw Aztec logo
                         ctx.fillStyle = '#FFD700';
@@ -1065,19 +1080,19 @@
                         ctx.fill();
                         ctx.stroke();
                         
-                        // Download the canvas as image
+                        // Download the canvas as JPG image
                         canvas.toBlob(function(blob) {
                             const url = URL.createObjectURL(blob);
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = 'aztec-privacy-protected-image.png';
+                            a.download = 'aztec-privacy-protected-image.jpg';
                             document.body.appendChild(a);
                             a.click();
                             document.body.removeChild(a);
                             URL.revokeObjectURL(url);
                             
-                            showStatus('Protected image downloaded with blur effect!', 'success');
-                        }, 'image/png');
+                            showStatus('Protected image downloaded as JPG!', 'success');
+                        }, 'image/jpeg', 0.9); // JPG format with 90% quality
                     };
                     
                     img.onerror = function() {
