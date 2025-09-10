@@ -1188,10 +1188,26 @@
             
             // Open Twitter share in new tab
             window.openTwitterShare = function(twitterUrl) {
-                console.log('🔗 Opening Twitter share...');
-                window.open(twitterUrl, '_blank', 'width=600,height=400');
-                closeTwitterModal();
-                showStatus('Twitter opened! Upload your protected image there.', 'success');
+                console.log('🔗 Opening Twitter share...', twitterUrl);
+                
+                try {
+                    // Use window.open with proper parameters
+                    const twitterWindow = window.open(twitterUrl, '_blank', 'noopener,noreferrer,width=600,height=400,scrollbars=yes,resizable=yes');
+                    
+                    if (twitterWindow) {
+                        console.log('✅ Twitter window opened successfully');
+                        closeTwitterModal();
+                        showStatus('Twitter opened! Upload your protected image there.', 'success');
+                    } else {
+                        console.log('❌ Popup blocked, trying direct navigation');
+                        // Fallback if popup is blocked
+                        window.location.href = twitterUrl;
+                    }
+                } catch (error) {
+                    console.error('❌ Error opening Twitter:', error);
+                    // Last resort - direct navigation
+                    window.location.href = twitterUrl;
+                }
             };
             
             // Close Twitter modal
@@ -1205,9 +1221,14 @@
             // Aztec Logo Bubble Effect
             function startAztecBubbleEffect() {
                 const container = document.getElementById('bubblesContainer');
-                if (!container) return;
+                if (!container) {
+                    console.error('❌ bubblesContainer not found!');
+                    return;
+                }
                 
-                console.log('🎆 Starting Aztec bubble effect...');
+                console.log('🎆 Starting Aztec bubble effect...', container);
+                console.log('📎 Container parent:', container.parentElement);
+                console.log('📏 Container dimensions:', container.offsetWidth, 'x', container.offsetHeight);
                 
                 // Create multiple bubbles with Aztec logo
                 function createBubble() {
@@ -1236,17 +1257,18 @@
                     
                     // Create Aztec-style symbol using SVG (inline, no external file needed)
                     const aztecSymbol = document.createElement('div');
+                    const uniqueId = Date.now() + Math.random().toString(36).substr(2, 9);
                     aztecSymbol.innerHTML = `
                         <svg width="${size * 0.7}" height="${size * 0.7}" viewBox="0 0 100 100" style="opacity: 0.9;">
                             <defs>
-                                <radialGradient id="aztecGrad${Date.now()}" cx="50%" cy="50%" r="50%">
+                                <radialGradient id="aztecGrad${uniqueId}" cx="50%" cy="50%" r="50%">
                                     <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.9" />
                                     <stop offset="50%" style="stop-color:#B8860B;stop-opacity:0.8" />
                                     <stop offset="100%" style="stop-color:#8B4513;stop-opacity:0.7" />
                                 </radialGradient>
                             </defs>
                             <!-- Aztec-style pyramid symbol -->
-                            <polygon points="50,10 20,40 20,60 50,90 80,60 80,40" fill="url(#aztecGrad${Date.now()})" stroke="#8B4513" stroke-width="2"/>
+                            <polygon points="50,10 20,40 20,60 50,90 80,60 80,40" fill="url(#aztecGrad${uniqueId})" stroke="#8B4513" stroke-width="2"/>
                             <polygon points="50,20 30,45 50,70 70,45" fill="#FFD700" opacity="0.6"/>
                             <circle cx="50" cy="45" r="8" fill="#8B4513" opacity="0.8"/>
                             <rect x="45" y="60" width="10" height="15" fill="#8B4513" opacity="0.7"/>
@@ -1255,6 +1277,8 @@
                     
                     bubble.appendChild(aztecSymbol);
                     container.appendChild(bubble);
+                    
+                    console.log(`🎆 Created bubble with Aztec symbol (size: ${size}px)`);
                     
                     // Play bubble sound with random delay
                     setTimeout(() => {
