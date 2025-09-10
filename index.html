@@ -1028,24 +1028,64 @@
                         canvas.width = img.width;
                         canvas.height = img.height;
                         
-                        // Apply blur effect using canvas filter
-                        ctx.filter = 'blur(15px)';
-                        ctx.drawImage(img, 0, 0);
+                        // Method 1: Apply blur using multiple draw operations for better compatibility
+                        // Create temporary canvas for blur effect
+                        const tempCanvas = document.createElement('canvas');
+                        const tempCtx = tempCanvas.getContext('2d');
+                        tempCanvas.width = img.width;
+                        tempCanvas.height = img.height;
+                        
+                        // Draw image multiple times with slight offsets to create blur effect
+                        tempCtx.globalAlpha = 0.1;
+                        for (let i = 0; i < 10; i++) {
+                            for (let j = 0; j < 10; j++) {
+                                const offsetX = (i - 5) * 2;
+                                const offsetY = (j - 5) * 2;
+                                tempCtx.drawImage(img, offsetX, offsetY);
+                            }
+                        }
+                        
+                        // Draw the blurred result to main canvas
+                        ctx.drawImage(tempCanvas, 0, 0);
+                        
+                        // Add semi-transparent overlay for stronger blur effect
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
                         
                         // Add text overlay
-                        ctx.filter = 'none';
                         ctx.fillStyle = 'white';
-                        ctx.font = 'bold 48px Arial';
+                        const fontSize = Math.max(24, Math.min(canvas.width / 10, 72));
+                        ctx.font = `bold ${fontSize}px Arial`;
                         ctx.textAlign = 'center';
                         ctx.strokeStyle = 'black';
-                        ctx.lineWidth = 2;
+                        ctx.lineWidth = fontSize / 24;
                         
                         const text = 'PRIVACY REALM';
                         const x = canvas.width / 2;
                         const y = canvas.height / 2;
                         
+                        // Add text with shadow effect
                         ctx.strokeText(text, x, y);
                         ctx.fillText(text, x, y);
+                        
+                        // Add Aztec logo in corner
+                        const logoSize = Math.min(canvas.width, canvas.height) * 0.15;
+                        const logoX = canvas.width - logoSize - 20;
+                        const logoY = 20;
+                        
+                        // Draw Aztec logo
+                        ctx.fillStyle = '#FFD700';
+                        ctx.strokeStyle = '#8B4513';
+                        ctx.lineWidth = 2;
+                        
+                        // Simple pyramid shape
+                        ctx.beginPath();
+                        ctx.moveTo(logoX + logoSize / 2, logoY);
+                        ctx.lineTo(logoX, logoY + logoSize);
+                        ctx.lineTo(logoX + logoSize, logoY + logoSize);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
                         
                         // Download the canvas as image
                         canvas.toBlob(function(blob) {
@@ -1058,11 +1098,16 @@
                             document.body.removeChild(a);
                             URL.revokeObjectURL(url);
                             
-                            showStatus('Protected image downloaded!', 'success');
+                            showStatus('Protected image downloaded with blur effect!', 'success');
                         }, 'image/png');
                     };
                     
-                    img.src = imageUrl.split('?')[0]; // Remove query parameters
+                    img.onerror = function() {
+                        console.error('❌ Error loading image for download');
+                        showStatus('Error loading image for download.', 'error');
+                    };
+                    
+                    img.src = imageUrl;
                 } catch (error) {
                     console.error('Download error:', error);
                     showStatus('Download failed. Please try again.', 'error');
