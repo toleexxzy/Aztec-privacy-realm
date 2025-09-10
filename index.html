@@ -356,29 +356,7 @@
     
     <header class="header">
         <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 0.5rem;">
-            <!-- Inline Aztec SVG Logo -->
-            <div style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: linear-gradient(135deg, #FFD700, #8B4513);">
-                <svg width="60" height="60" viewBox="0 0 100 100">
-                    <defs>
-                        <radialGradient id="logoGrad" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
-                            <stop offset="70%" style="stop-color:#B8860B;stop-opacity:0.9" />
-                            <stop offset="100%" style="stop-color:#8B4513;stop-opacity:0.8" />
-                        </radialGradient>
-                    </defs>
-                    <!-- Main Aztec pyramid -->
-                    <polygon points="50,15 25,35 25,55 50,85 75,55 75,35" fill="url(#logoGrad)" stroke="#654321" stroke-width="1.5"/>
-                    <!-- Inner diamond -->
-                    <polygon points="50,25 35,40 50,65 65,40" fill="#FFD700" opacity="0.8"/>
-                    <!-- Central circle (sun) -->
-                    <circle cx="50" cy="42" r="6" fill="#8B4513"/>
-                    <!-- Bottom rectangle (steps) -->
-                    <rect x="45" y="55" width="10" height="12" fill="#654321" opacity="0.9"/>
-                    <!-- Side decorations -->
-                    <rect x="40" y="45" width="4" height="4" fill="#FFD700" opacity="0.6"/>
-                    <rect x="56" y="45" width="4" height="4" fill="#FFD700" opacity="0.6"/>
-                </svg>
-            </div>
+            <img src="aztec logo.jpg" alt="Aztec Privacy Realm Logo" width="60" height="60" style="border-radius: 8px; object-fit: cover;" onerror="console.error('Logo failed to load:', this.src)">
             <h1 style="margin-bottom: 0;">Aztec Privacy Realm</h1>
         </div>
         <p>Privacy is power go private today</p>
@@ -1300,30 +1278,43 @@
                         overflow: hidden;
                     `;
                     
-                    // Create Aztec-style symbol using SVG (inline, no external file needed)
-                    const aztecSymbol = document.createElement('div');
-                    const uniqueId = Date.now() + Math.random().toString(36).substr(2, 9);
-                    aztecSymbol.innerHTML = `
-                        <svg width="${size * 0.7}" height="${size * 0.7}" viewBox="0 0 100 100" style="opacity: 0.9;">
-                            <defs>
-                                <radialGradient id="aztecGrad${uniqueId}" cx="50%" cy="50%" r="50%">
-                                    <stop offset="0%" style="stop-color:#FFD700;stop-opacity:0.9" />
-                                    <stop offset="50%" style="stop-color:#B8860B;stop-opacity:0.8" />
-                                    <stop offset="100%" style="stop-color:#8B4513;stop-opacity:0.7" />
-                                </radialGradient>
-                            </defs>
-                            <!-- Aztec-style pyramid symbol -->
-                            <polygon points="50,10 20,40 20,60 50,90 80,60 80,40" fill="url(#aztecGrad${uniqueId})" stroke="#8B4513" stroke-width="2"/>
-                            <polygon points="50,20 30,45 50,70 70,45" fill="#FFD700" opacity="0.6"/>
-                            <circle cx="50" cy="45" r="8" fill="#8B4513" opacity="0.8"/>
-                            <rect x="45" y="60" width="10" height="15" fill="#8B4513" opacity="0.7"/>
-                        </svg>
+                    // Add your actual Aztec logo inside the bubble
+                    const logo = document.createElement('img');
+                    logo.src = 'aztec logo.jpg';
+                    logo.style.cssText = `
+                        width: ${size * 0.6}px;
+                        height: ${size * 0.6}px;
+                        border-radius: 50%;
+                        opacity: 0.9;
+                        object-fit: cover;
                     `;
                     
-                    bubble.appendChild(aztecSymbol);
+                    // Add error handling for logo loading
+                    logo.onerror = function() {
+                        console.log('Logo failed to load, using fallback');
+                        // Create fallback golden circle if logo fails
+                        const fallback = document.createElement('div');
+                        fallback.style.cssText = `
+                            width: ${size * 0.6}px;
+                            height: ${size * 0.6}px;
+                            border-radius: 50%;
+                            background: radial-gradient(circle, #FFD700, #B8860B);
+                            opacity: 0.8;
+                        `;
+                        bubble.appendChild(fallback);
+                    };
+                    
+                    logo.onload = function() {
+                        console.log('✅ Aztec logo loaded successfully in bubble');
+                        bubble.appendChild(logo);
+                    };
+                    
+                    // Trigger loading
+                    logo.src = 'aztec logo.jpg';
+                    
                     container.appendChild(bubble);
                     
-                    console.log(`🎆 Created bubble with Aztec symbol (size: ${size}px)`);
+                    console.log(`🎆 Created bubble with Aztec logo (size: ${size}px)`);
                     
                     // Play bubble sound with random delay
                     setTimeout(() => {

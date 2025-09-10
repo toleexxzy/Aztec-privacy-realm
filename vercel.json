@@ -8,12 +8,20 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "aztec logo.jpg",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/index.ts"
+    },
+    {
+      "src": "/aztec logo.jpg",
+      "dest": "/aztec logo.jpg"
     },
     {
       "src": "/(.*\\.(css|js|jpg|png|svg|ico))",
